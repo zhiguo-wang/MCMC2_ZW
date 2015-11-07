@@ -1,21 +1,24 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # 
 #   Program Name:   LIFP - individual characteristics
-#   Version:        1.1
+#   Version:        1.2
 #
 #   Created By:     Justin Xu
-#   Modified By:    Justin Xu
+#   Modified By:    Zhiguo Wang
 #
 #   Database Used:  Individual Information
-#   Source Tables:  \\Inputs\\
+#   Source Tables:  \\Inputs\\IndCha
 #   Target Tables:  \\Outputs\\
 #
-#   Purpose:            To input individual characteristics
+#   Purpose:        To input individual characteristics
 #
 #   Version           Date           Author            change
 #               |               |               |
 #     1.1       |   09/21/15    |    Justin     |      First Version
-#
+#     1.101     |   10/22/15    |    Zhiguo     |      1. Method to read file (paste0);
+#                                                      2. Remove useless variable (rm);
+#     1.2       |   11/07/15    |    Zhiguo     |      Added perAgg, perMid, perLow 
+
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -24,75 +27,79 @@
 
 IndCha <- read.csv(paste0(root,"Inputs\\IndCha\\IndCha.csv"), header = TRUE)
 
-curAge <- as.numeric(levels(factor(IndCha[1, 2])))
+currentAge <- IndCha$Current.Age
 
-gender <- levels(factor(IndCha[2, 2]))
+#gender <- IndCha$Gender
 
-state <- levels(factor(IndCha[3, 2]))
+if(IndCha$Gender == "M" | IndCha$Gender == "m") {
+  gender <- "M"
+} else {
+  gender <- "F"
+}
 
-curInc <- as.numeric(levels(factor(IndCha[4, 2])))
+state <- IndCha$State
 
-mariaged <- levels(factor(IndCha[5, 2]))
+annualIncome <- IndCha$Annual.Income
 
-spoInc <- as.numeric(levels(factor(IndCha[6, 2])))
+maritalStatus <- IndCha$Marital.Status
 
-mortBal <- as.numeric(levels(factor(IndCha[7, 2])))
+spouseIncome <- IndCha$Spouse.Income
 
-mMortPay <- as.numeric(levels(factor(IndCha[8, 2])))
+monMortPay <- IndCha$Monthly.Mortgage.Payment
 
-mRentPay <- as.numeric(levels(factor(IndCha[9, 2])))
+monMortPeriod <- IndCha$Remaining.Mortgage.Period..Month.
 
-debt <- as.numeric(levels(factor(IndCha[10, 2])))
+monRentPay <- IndCha$Monthly.Rent.Payment
 
-breWin <- levels(factor(IndCha[11, 2]))
+debt <- IndCha$Unsecured.Debt
 
-retAge <- as.numeric(levels(factor(IndCha[12, 2])))
+breadWinner <- IndCha$Breadwinner
 
-cSavBal <- as.numeric(levels(factor(IndCha[13, 2])))
+retireAge <- IndCha$Retirement.Age
 
-emefun <- as.numeric(levels(factor(IndCha[14, 2])))
+currentSavingBalance <- IndCha$Current.Saving.Balance..for.retirement.
 
-eeHea <- as.numeric(levels(factor(IndCha[15, 2])))
+emergencyFund <- IndCha$Emergency.Fund
 
-eeWL <- as.numeric(levels(factor(IndCha[16, 2])))
+eeHealth <- IndCha$EE...Healthcare.Expenses
 
-eeTerm <- as.numeric(levels(factor(IndCha[17, 2])))
+eeWL <- IndCha$EE...Whole.Life
 
-eeDis <- as.numeric(levels(factor(IndCha[18, 2])))
+eeTL <- IndCha$EE...Term.Life
 
-eeUni <- as.numeric(levels(factor(IndCha[19, 2])))
+eeDI <- IndCha$EE...Annual.Disability.Income
 
-ee401k <- as.numeric(levels(factor(IndCha[20, 2])))
+eeUL <- IndCha$EE...Universal.Life
 
-eeRet <- as.numeric(levels(factor(IndCha[21, 2])))
+ee401k <- IndCha$EE.....Retirement.Contributions..401k.
 
-erHea <- as.numeric(levels(factor(IndCha[22, 2])))
+eeRetire <- IndCha$EE.....Retirement.Contributions..after.tax.cost.
 
-erWL <- as.numeric(levels(factor(IndCha[23, 2])))
+erHealth <- IndCha$ER...Healthcare.Expenses
 
-erTerm <- as.numeric(levels(factor(IndCha[24, 2])))
+erWL <- IndCha$ER...Whole.Life
 
-erDis <- as.numeric(levels(factor(IndCha[25, 2])))
+erTL <- IndCha$ER...Term.Life
 
-eruni <- as.numeric(levels(factor(IndCha[26, 2])))
+erDI <- IndCha$ER...Annual.Disability.Income
 
-er401k <- as.numeric(levels(factor(IndCha[27, 2])))
+erUL <- IndCha$ER...Universal.Life
 
-repsi <- as.numeric(levels(factor(IndCha[28, 2])))
+er401k <- IndCha$ER.....Retirement.Contributions..401k.
+
+repSurvivorIncome <- IndCha$X..Replacement.for.Survivor.Income..whole.life.insurance.
 
 for (i in 1 : 20) {
-  nam <- paste("depAge", i, sep = ".")
-  assign(nam, as.numeric(levels(factor(IndCha[28 + i, 2]))))
+  nam <- paste("dependentAge", i, sep = ".")
+  assign(nam, IndCha[1, 30 + i])
 }
 
 for (i in 1 : 20) {
-  nam <- paste("depgen", i, sep = ".")
-  assign(nam, levels(factor(IndCha[48 + i, 2])))
+  nam <- paste("dependentGender", i, sep = ".")
+  assign(nam, levels(factor(IndCha[1, 50 + i])))
 }
 
-actbud <- as.numeric(levels(factor(IndCha[69, 2])))
+actBudget <- IndCha$Actual.Budget..not.including.costs.of.existing.coverage.
 
-
-
-idealBudget <- 41782
-actBudget <- 12042
+# remove useless variable, release memory
+rm(IndCha)
