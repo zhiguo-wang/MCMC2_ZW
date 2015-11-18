@@ -5,8 +5,34 @@
 # Return:   Adjusted Federal Tax
 getFedTax <- function(curInc, spoInc, married){
     
-    spoInc <- spoInc * (married == "M")
+    # 1. Tax adjustment forward from 2011 to 2014
+    #    File :  MM lookup table with testing page 0918 v39
+    #    Sheet: IRS lookups
+    #    Cell : I10
+    TaxAdj.1114 <- 1.076891
     
+    
+    # 1. Tax adjustment back from 2014 to 2011
+    #    File :  MM lookup table with testing page 0918 v39
+    #    Sheet: IRS lookups
+    #    Cell : I9
+    TaxAdj.1411 <- 0.928599
+    
+    
+    # 1. Income adjustment forward from 2011 to 2014
+    #    File :  MM lookup table with testing page 0918 v39
+    #    Sheet: IRS lookups
+    #    Cell : C10
+    IncomeAdj.1114 <- 1.092727
+    
+    
+    # 1. Income adjustment back from 2014 to 2011
+    #    File :  MM lookup table with testing page 0918 v39
+    #    Sheet: IRS lookups
+    #    Cell : C10
+    IncomeAdj.1411 <- 0.915141659
+    
+    spoInc <- spoInc * (married == "M")
     HIBT <- curInc + spoInc
     # Estimated 2011 HBIT [IRS lookups(C14) = C13 * C9]
     estHIBT <- round(HIBT * IncomeAdj.1411, 0)
@@ -63,7 +89,7 @@ getRawIncomeTax <- function(curInc, spoInc, married, dependents, state, rawFedTa
     if("Yes" %in% taxStatsByState$FedTaxDeductible){
         maxDeduction <- taxStatsByState$maxDeduction.M * ifMarried + (taxStatsByState$maxDeduction.S * !ifMarried)
         deduction <- min(maxDeduction, rawFedTax) + rawFedTax * !(maxDeduction > 0)
-        print(paste("deduction = ", deduction))
+
     } else {
         deduction <- 0
     }
@@ -73,7 +99,7 @@ getRawIncomeTax <- function(curInc, spoInc, married, dependents, state, rawFedTa
     # taxable income for AGI 
     taxIncome <- curInc + spoInc - taxCredit * (taxStatsByState$ExmpType != "(c)") - deduction - fedStd
     
-    print(paste("taxIncome = ", taxIncome))
+
     if(ifMarried){
         Bracket.L <- taxStatsByState$Brackets.M.L
         Bracket.H <- taxStatsByState$Brackets.M.H
@@ -82,7 +108,7 @@ getRawIncomeTax <- function(curInc, spoInc, married, dependents, state, rawFedTa
         Bracket.H <- taxStatsByState$Brackets.S.H
     }
     
-    print(paste("Bracket.L = ", Bracket.L, ";  Bracket.H = ", Bracket.H))
+
     
     tax.total <- taxStatsByState$Low * min(Bracket.L, taxIncome) + 
         taxStatsByState$Middle * max(0, min(Bracket.H, taxIncome) - Bracket.L) +
@@ -103,7 +129,7 @@ getRawIncomeTax <- function(curInc, spoInc, married, dependents, state, rawFedTa
 #   state: State of customer
 # Return:   State Income Tax Tax
 getStateIncomeTax <- function(curInc, spoInc, married, dependents,state){
-    spoInc <- spoInc * ifMarried
+    spoInc <- spoInc * (married == "M")
     
     rawFedTax <- getRawIncomeTax(curInc, spoInc, married, dependents,"")
     
