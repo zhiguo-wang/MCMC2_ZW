@@ -32,23 +32,6 @@ getSSB <- function(annualIncome, retireAge){
 #    rm(SSBase.2014, perct, mInc, bend, tier, PIA.unadjusted, adjFactor)
 }
 
-# calculate Federal tax and state tax
-getFedTax <- function(){
-    HIBT <- curInc + spoInc
-    # Estimated 2011 HBIT [IRS lookups(C14) = C13 * C9]
-    estHIBT <- round(HIBT * IncomeAdj.1411, 0)
-    
-    # Highest HIBT in 2011 IRS tables
-    IRSMaxHIBT <- 10000000
-    
-    # HIBT to use for tax lookups
-    IRSLookupHIBT <- min(estHIBT, IRSMaxHIBT) 
-    
-    # Read in IRS tax stats data
-    taxStats <- read.csv("Inputs\\IntermediateData\\IRSTaxStats.csv")
-    
-    
-}
 
 getRetirementNeeds <- function(){
     wageAtRetirement <- curInc * 1.03^(retAge - curAge)

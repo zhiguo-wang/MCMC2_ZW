@@ -17,6 +17,6 @@ vLookup <- function(lookup_value, table_array, col_index){
 
 # Get stochastic path #
 getLifePath <- function(CurAge, Gender){
-    load(paste0(root,"WsImage\\Unif_MCMC.RData"))
+    load(paste0(root, workspaces, "Unif_MCMC.RData"))
     return(get(paste0("umcmc_",Gender, "_", CurAge)))
 }
